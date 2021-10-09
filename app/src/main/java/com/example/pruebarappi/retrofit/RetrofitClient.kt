@@ -6,6 +6,7 @@ import com.example.pruebarappi.utils.hasNetwork
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -16,10 +17,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RetrofitClient(private val context: Context) {
+class RetrofitClient() {
 
     private val cacheSize = (5 * 1024 * 1024).toLong()
-    private val myCache = Cache(context.cacheDir, cacheSize)
 
     @Singleton
     @Provides
@@ -28,9 +28,12 @@ class RetrofitClient(private val context: Context) {
 
     @Singleton
     @Provides
-    fun providesOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
+    fun providesOkHttpClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+        @ApplicationContext context: Context
+    ): OkHttpClient =
         OkHttpClient.Builder()
-            .cache(myCache)
+            .cache(Cache(context.cacheDir, cacheSize))
             .addInterceptor { chain ->
                 var request = chain.request()
                 request = if (hasNetwork(context)!!)

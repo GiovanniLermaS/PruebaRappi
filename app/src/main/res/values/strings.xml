@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">PruebaRappi</string>
+    <string name="tvShows">Series</string>
+    <string name="movies">Películas</string>
+    <string name="myList">Mi lista</string>
+    <string name="play">Reproducir</string>
+    <string name="info">Información</string>
+    <string name="moviesNowPlaying">Reproducionando en el momento</string>
+    <string name="moviesPopular">Películas más populares</string>
+    <string name="tvAiringToday">Al aire hoy</string>
+    <string name="tvPopular">Tv popular</string>
+</resources>

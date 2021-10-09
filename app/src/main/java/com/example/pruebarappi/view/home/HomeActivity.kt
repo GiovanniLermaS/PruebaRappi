@@ -232,6 +232,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
                 listMoviesPopular,
                 listTvAiringToday,
                 listTvPopular,
+                appDatabase,
                 this
             )
         )

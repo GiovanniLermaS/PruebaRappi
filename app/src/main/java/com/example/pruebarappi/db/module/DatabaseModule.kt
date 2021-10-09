@@ -15,21 +15,17 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    lateinit var database: AppDatabase
-
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
-        database = Room.databaseBuilder(
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
             context,
             AppDatabase::class.java, "result-service"
         ).build()
-        return database
     }
 
     @Provides
     fun provideObjectDao(database: AppDatabase): ResultServiceDao {
         return database.resultServiceDao()
     }
-
 }

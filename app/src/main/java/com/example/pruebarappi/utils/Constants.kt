@@ -6,7 +6,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
-import com.example.pruebarappi.db.AppDatabase
 import com.example.pruebarappi.db.model.ResultService
 
 const val BASE_URL = "https://api.themoviedb.org/3/"
@@ -18,8 +17,6 @@ const val MOVIES_POPULAR = "movie/popular?api_key=$API_KEY&language=$LANGUAGE"
 const val TV_AIRING_TODAY = "tv/airing_today?api_key=$API_KEY&language=$LANGUAGE\""
 const val TV_POPULAR = "tv/popular?api_key=$API_KEY&language=$LANGUAGE\""
 const val RESULT_SERVICE = "resultService"
-
-var database: AppDatabase? = null
 
 fun hasNetwork(context: Context): Boolean? {
     var isConnected: Boolean? = false

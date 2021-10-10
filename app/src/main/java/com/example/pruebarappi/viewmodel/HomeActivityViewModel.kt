@@ -114,7 +114,7 @@ class HomeActivityViewModel @Inject constructor(private val homeActivityReposito
                 isMyList!! -> {
                     ft.replace(
                         R.id.fg1,
-                        MyListFragment(moviesTvShowInterface)
+                        MyListFragment(moviesTvShowInterface, appDatabase),
                     )
                     ft.commit()
                 }

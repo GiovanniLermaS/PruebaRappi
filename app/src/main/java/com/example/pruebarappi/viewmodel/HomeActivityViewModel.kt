@@ -93,7 +93,7 @@ class HomeActivityViewModel @Inject constructor(private val homeActivityReposito
             this.tvAiringToday = listTvAiringToday
         if (listTvPopular != null)
             this.tvPopular = listTvPopular
-        params?.setMargins(0, 0, 0, 0)
+        params?.setMargins(0, 0, 0, 100)
         binding?.fg1?.layoutParams = params
         val ft = (context as HomeActivity).supportFragmentManager.beginTransaction()
         ft.replace(

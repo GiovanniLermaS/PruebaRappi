@@ -16,11 +16,13 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.facebook.imagepipeline.request.Postprocessor
+import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.fresco.processors.BlurPostprocessor
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private val resultService by lazy { intent.getSerializableExtra(RESULT_SERVICE) as ResultService }

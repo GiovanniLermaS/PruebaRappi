@@ -30,13 +30,13 @@ fun hasNetwork(context: Context): Boolean? {
 
 fun setImageAddOrRemoveMyList(
     resultService: ResultService?,
-    ivAddMyList: ImageView,
+    ivAddMyList: ImageView?,
     resources: Resources,
     image1: Int,
     image2: Int
 ): Boolean {
     if (resultService == null) {
-        ivAddMyList.setImageDrawable(
+        ivAddMyList?.setImageDrawable(
             ResourcesCompat.getDrawable(
                 resources,
                 image1,
@@ -45,7 +45,7 @@ fun setImageAddOrRemoveMyList(
         )
         return true
     } else {
-        ivAddMyList.setImageDrawable(
+        ivAddMyList?.setImageDrawable(
             ResourcesCompat.getDrawable(
                 resources,
                 image2,

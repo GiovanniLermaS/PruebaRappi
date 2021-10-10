@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pruebarappi.R
+import com.example.pruebarappi.databinding.ActivityHomeBinding
 import com.example.pruebarappi.db.AppDatabase
 import com.example.pruebarappi.db.model.ResultService
 import com.example.pruebarappi.utils.*
@@ -16,9 +17,6 @@ import com.example.pruebarappi.viewmodel.HomeActivityViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.toolbar.*
-import kotlinx.android.synthetic.main.view_bottom_sheet_details.*
 import java.util.*
 import javax.inject.Inject
 
@@ -29,30 +27,50 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
 
     private var resultService: ResultService? = null
 
+    private var binding: ActivityHomeBinding? = null
+
     @Inject
     lateinit var appDatabase: AppDatabase
 
     private val homeActivityViewModel by viewModels<HomeActivityViewModel>()
 
     private fun consumeMoviesNowPlaying() {
-        homeActivityViewModel.getResponseV(MOVIES_NOW_PLAYING, 1, { listMoviesNowPlaying ->
-            consumeMoviesPopular(listMoviesNowPlaying?.results)
-        }, { error -> Snackbar.make(coordinatorLayout, "$error", Snackbar.LENGTH_SHORT).show() })
+        homeActivityViewModel.getResponseV(
+            MOVIES_NOW_PLAYING,
+            1,
+            { listMoviesNowPlaying ->
+                consumeMoviesPopular(listMoviesNowPlaying?.results)
+            },
+            { error ->
+                Snackbar.make(binding?.coordinatorLayout!!, "$error", Snackbar.LENGTH_SHORT).show()
+            })
     }
 
     private fun consumeMoviesPopular(moviesNowPlaying: ArrayList<ResultService>?) {
-        homeActivityViewModel.getResponseV(MOVIES_POPULAR, 1, { listMoviesPopular ->
-            consumeTvAiringToday(moviesNowPlaying, listMoviesPopular?.results)
-        }, { error -> Snackbar.make(coordinatorLayout, "$error", Snackbar.LENGTH_SHORT).show() })
+        homeActivityViewModel.getResponseV(
+            MOVIES_POPULAR,
+            1,
+            { listMoviesPopular ->
+                consumeTvAiringToday(moviesNowPlaying, listMoviesPopular?.results)
+            },
+            { error ->
+                Snackbar.make(binding?.coordinatorLayout!!, "$error", Snackbar.LENGTH_SHORT).show()
+            })
     }
 
     private fun consumeTvAiringToday(
         moviesNowPlaying: ArrayList<ResultService>?,
         moviesPopular: ArrayList<ResultService>?
     ) {
-        homeActivityViewModel.getResponseV(TV_AIRING_TODAY, 1, { listTvAiringToday ->
-            consumeTvPopular(moviesNowPlaying, moviesPopular, listTvAiringToday?.results)
-        }, { error -> Snackbar.make(coordinatorLayout, "$error", Snackbar.LENGTH_SHORT).show() })
+        homeActivityViewModel.getResponseV(
+            TV_AIRING_TODAY,
+            1,
+            { listTvAiringToday ->
+                consumeTvPopular(moviesNowPlaying, moviesPopular, listTvAiringToday?.results)
+            },
+            { error ->
+                Snackbar.make(binding?.coordinatorLayout!!, "$error", Snackbar.LENGTH_SHORT).show()
+            })
     }
 
     private fun consumeTvPopular(
@@ -60,45 +78,57 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
         moviesPopular: ArrayList<ResultService>?,
         tvAiringToday: ArrayList<ResultService>?
     ) {
-        homeActivityViewModel.getResponseV(TV_POPULAR, 1, { listTvPopular ->
-            homeActivityViewModel.showFragment(
-                moviesNowPlaying!![0],
-                moviesNowPlaying,
-                moviesPopular,
-                tvAiringToday,
-                listTvPopular?.results,
-                supportFragmentManager.beginTransaction(),
-                appDatabase,
-                this
-            )
-        }, { error -> Snackbar.make(coordinatorLayout, "$error", Snackbar.LENGTH_SHORT).show() })
+        homeActivityViewModel.getResponseV(
+            TV_POPULAR,
+            1,
+            { listTvPopular ->
+                homeActivityViewModel.showFragment(
+                    moviesNowPlaying!![0],
+                    moviesNowPlaying,
+                    moviesPopular,
+                    tvAiringToday,
+                    listTvPopular?.results,
+                    supportFragmentManager.beginTransaction(),
+                    appDatabase,
+                    this
+                )
+            },
+            { error ->
+                Snackbar.make(binding?.coordinatorLayout!!, "$error", Snackbar.LENGTH_SHORT).show()
+            })
     }
 
     fun setDataResultService(resultService: ResultService?) {
-        ivImageBottom.setImageURI(Uri.parse(BASE_URL_IMAGE + resultService?.poster_path))
-        tvTitleBottom.text = resultService?.title
-        tvDescriptionBottom.text = resultService?.overview
+        binding?.clBottomSheet?.ivImageBottom?.setImageURI(Uri.parse(BASE_URL_IMAGE + resultService?.poster_path))
+        binding?.clBottomSheet?.tvTitleBottom?.text = resultService?.title
+        binding?.clBottomSheet?.tvDescriptionBottom?.text = resultService?.overview
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
-
         consumeMoviesNowPlaying()
-        sheetBehavior = BottomSheetBehavior.from(clDetailBottom)
+        sheetBehavior = BottomSheetBehavior.from(binding?.clBottomSheet?.clDetailBottom!!)
         sheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.btPlay -> Snackbar.make(coordinatorLayout, "Play any movie", Snackbar.LENGTH_SHORT)
+            R.id.btPlay -> Snackbar.make(
+                binding?.coordinatorLayout!!,
+                "Play any movie",
+                Snackbar.LENGTH_SHORT
+            )
                 .show()
             R.id.tvShows -> homeActivityViewModel.showByType(
-                tvShows, tvMovies, tvMyList,
+                binding?.clToolbar?.tvShows,
+                binding?.clToolbar?.tvMovies,
+                binding?.clToolbar?.tvMyList,
                 isMovie = false,
                 isMyList = false,
                 supportFragmentManager.beginTransaction(),
@@ -106,7 +136,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
                 this
             )
             R.id.tvMovies -> homeActivityViewModel.showByType(
-                tvMovies, tvShows, tvMyList,
+                binding?.clToolbar?.tvMovies,
+                binding?.clToolbar?.tvShows,
+                binding?.clToolbar?.tvMyList,
                 isMovie = true,
                 isMyList = false,
                 supportFragmentManager.beginTransaction(),
@@ -114,7 +146,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
                 this
             )
             R.id.tvMyList -> homeActivityViewModel.showByType(
-                tvMyList, tvMovies, tvShows,
+                binding?.clToolbar?.tvMyList,
+                binding?.clToolbar?.tvMovies,
+                binding?.clToolbar?.tvShows,
                 isMovie = false,
                 isMyList = true,
                 supportFragmentManager.beginTransaction(),
@@ -143,24 +177,30 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
 
     override fun onBackPressed() {
         when {
-            tvShows.visibility == View.VISIBLE -> homeActivityViewModel.showByType(
-                tvShows, tvMovies, tvMyList,
+            binding?.clToolbar?.tvShows?.visibility == View.VISIBLE -> homeActivityViewModel.showByType(
+                binding?.clToolbar?.tvShows,
+                binding?.clToolbar?.tvMovies,
+                binding?.clToolbar?.tvMyList,
                 isMovie = false,
                 isMyList = false,
                 supportFragmentManager.beginTransaction(),
                 appDatabase,
                 this
             )
-            tvMovies.visibility == View.VISIBLE -> homeActivityViewModel.showByType(
-                tvMovies, tvShows, tvMyList,
+            binding?.clToolbar?.tvMovies?.visibility == View.VISIBLE -> homeActivityViewModel.showByType(
+                binding?.clToolbar?.tvMovies,
+                binding?.clToolbar?.tvShows,
+                binding?.clToolbar?.tvMyList,
                 isMovie = false,
                 isMyList = false,
                 supportFragmentManager.beginTransaction(),
                 appDatabase,
                 this
             )
-            tvMyList.visibility == View.VISIBLE -> homeActivityViewModel.showByType(
-                tvMyList, tvShows, tvMovies,
+            binding?.clToolbar?.tvMyList?.visibility == View.VISIBLE -> homeActivityViewModel.showByType(
+                binding?.clToolbar?.tvMyList,
+                binding?.clToolbar?.tvShows,
+                binding?.clToolbar?.tvMovies,
                 isMovie = false,
                 isMyList = false,
                 supportFragmentManager.beginTransaction(),

@@ -25,9 +25,13 @@
                 android:layout_height="match_parent"
                 android:layout_marginBottom="50dp" />
 
-            <include layout="@layout/toolbar" />
+            <include
+                android:id="@+id/clToolbar"
+                layout="@layout/toolbar" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <include layout="@layout/view_bottom_sheet_details" />
+    <include
+        android:id="@+id/clBottomSheet"
+        layout="@layout/view_bottom_sheet_details" />
 </androidx.constraintlayout.widget.ConstraintLayout>

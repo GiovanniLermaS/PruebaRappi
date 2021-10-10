@@ -7,6 +7,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.pruebarappi.R
+import com.example.pruebarappi.databinding.ActivityDetailBinding
 import com.example.pruebarappi.db.AppDatabase
 import com.example.pruebarappi.db.model.ResultService
 import com.example.pruebarappi.utils.BASE_URL_IMAGE
@@ -18,7 +19,6 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.facebook.imagepipeline.request.Postprocessor
 import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.fresco.processors.BlurPostprocessor
-import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,12 +27,12 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private val resultService by lazy { intent.getSerializableExtra(RESULT_SERVICE) as ResultService }
 
+    private var binding: ActivityDetailBinding? = null
+
     @Inject
     lateinit var appDatabase: AppDatabase
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+    private fun showDetailMovie() {
         if (resultService.poster_path != null) {
             val postprocessor: Postprocessor = BlurPostprocessor(this, 50)
             val imageRequest =
@@ -41,15 +41,13 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                     .build()
             val controller = Fresco.newDraweeControllerBuilder()
                 .setImageRequest(imageRequest)
-                .setOldController(ivBackgroundDetail.controller)
+                .setOldController(binding?.ivBackgroundDetail?.controller)
                 .build() as PipelineDraweeController
-            ivBackgroundDetail.controller = controller
-
-            ivImageDetail.setImageURI(Uri.parse(BASE_URL_IMAGE + resultService.poster_path))
-            tvDescriptionDetail.text = resultService.overview
-
+            binding?.ivBackgroundDetail?.controller = controller
+            binding?.ivImageDetail?.setImageURI(Uri.parse(BASE_URL_IMAGE + resultService.poster_path))
+            binding?.tvDescriptionDetail?.text = resultService.overview
             addOrRemoveMyList(
-                ivAdd,
+                binding?.ivAdd,
                 false,
                 R.drawable.ic_add,
                 R.drawable.ic_check,
@@ -57,19 +55,8 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.ivAdd -> addOrRemoveMyList(
-                ivAdd,
-                true,
-                R.drawable.ic_check,
-                R.drawable.ic_add
-            )
-        }
-    }
-
     private fun addOrRemoveMyList(
-        ivAdd: ImageView,
+        ivAdd: ImageView?,
         isSetRoom: Boolean,
         image1: Int,
         image2: Int
@@ -86,6 +73,25 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
             if (isSetRoom)
                 if (isResultService) resultServiceDao.setResultService(resultService)
                 else resultServiceDao.deleteResultServiceById(resultService.id!!)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_detail)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+        showDetailMovie()
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.ivAdd -> addOrRemoveMyList(
+                binding?.ivAdd,
+                true,
+                R.drawable.ic_check,
+                R.drawable.ic_add
+            )
         }
     }
 }

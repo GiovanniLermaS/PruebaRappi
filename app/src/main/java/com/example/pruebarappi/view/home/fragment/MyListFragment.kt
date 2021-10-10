@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
-import com.example.pruebarappi.R
+import com.example.pruebarappi.databinding.FragmentMyListBinding
 import com.example.pruebarappi.db.AppDatabase
 import com.example.pruebarappi.db.model.ResultService
 import com.example.pruebarappi.view.home.fragment.adapter.MoviesTvShowAdapter
@@ -20,20 +19,26 @@ class MyListFragment(
 
     private var listResultService: List<ResultService>? = null
 
+    private var binding: FragmentMyListBinding? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v = inflater.inflate(R.layout.fragment_my_list, container, false)
+        binding = FragmentMyListBinding.inflate(layoutInflater)
+        return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launch {
             listResultService = appDatabase.resultServiceDao().getResultService()
             if (listResultService != null && listResultService!!.isNotEmpty()) {
-                v.findViewById<RecyclerView>(R.id.tvMyList).adapter = MoviesTvShowAdapter(
+                binding?.tvMyList?.adapter = MoviesTvShowAdapter(
                     listResultService as ArrayList<ResultService>,
                     moviesTvShowInterface
                 )
             }
         }
-        return v
+        super.onViewCreated(view, savedInstanceState)
     }
 }

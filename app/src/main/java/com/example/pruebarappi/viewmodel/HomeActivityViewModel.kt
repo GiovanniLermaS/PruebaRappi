@@ -4,9 +4,9 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.View
 import android.widget.TextView
-import androidx.fragment.app.FragmentTransaction
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModel
-import com.example.pruebarappi.R
+import com.example.pruebarappi.databinding.ActivityHomeBinding
 import com.example.pruebarappi.db.AppDatabase
 import com.example.pruebarappi.db.model.ResponseService
 import com.example.pruebarappi.db.model.ResultService
@@ -34,6 +34,30 @@ class HomeActivityViewModel @Inject constructor(private val homeActivityReposito
 
     private var temporalId: Int? = null
 
+    private var appDatabase: AppDatabase? = null
+
+    private var binding: ActivityHomeBinding? = null
+
+    private var moviesTvShowInterface: MoviesTvShowInterface? = null
+
+    private var params: CoordinatorLayout.LayoutParams? = null
+
+    fun setInitialParams(
+        appDatabase: AppDatabase,
+        binding: ActivityHomeBinding?,
+        moviesTvShowInterface: MoviesTvShowInterface
+    ) {
+        this.appDatabase = appDatabase
+        this.binding = binding
+        this.moviesTvShowInterface = moviesTvShowInterface
+
+        this.params = CoordinatorLayout.LayoutParams(
+            this.binding?.fg1?.layoutParams?.width!!,
+            this.binding?.fg1?.layoutParams?.height!!
+        )
+
+    }
+
     fun getResponseV(
         url: String,
         page: Int,
@@ -59,9 +83,7 @@ class HomeActivityViewModel @Inject constructor(private val homeActivityReposito
         listMoviesPopular: ArrayList<ResultService>?,
         listTvAiringToday: ArrayList<ResultService>?,
         listTvPopular: ArrayList<ResultService>?,
-        ft: FragmentTransaction,
-        appDatabase: AppDatabase,
-        moviesTvShowInterface: MoviesTvShowInterface
+        context: Context
     ) {
         if (listMoviesNowPlaying != null)
             this.moviesNowPlaying = listMoviesNowPlaying
@@ -71,8 +93,11 @@ class HomeActivityViewModel @Inject constructor(private val homeActivityReposito
             this.tvAiringToday = listTvAiringToday
         if (listTvPopular != null)
             this.tvPopular = listTvPopular
+        params?.setMargins(0, 0, 0, 0)
+        binding?.fg1?.layoutParams = params
+        val ft = (context as HomeActivity).supportFragmentManager.beginTransaction()
         ft.replace(
-            R.id.fg1,
+            binding?.fg1?.id!!,
             MoviesTvShowFragment(
                 resultService,
                 listMoviesNowPlaying,
@@ -90,40 +115,40 @@ class HomeActivityViewModel @Inject constructor(private val homeActivityReposito
         tvAnimation: TextView?,
         tvShowHide1: TextView?,
         tvShowHide2: TextView?,
-        isMovie: Boolean?,
-        isMyList: Boolean?,
-        ft: FragmentTransaction,
-        appDatabase: AppDatabase,
-        moviesTvShowInterface: MoviesTvShowInterface
+        isMovie: Boolean,
+        isMyList: Boolean,
+        context: Context
     ) {
         if (tvShowHide1?.visibility == View.VISIBLE && tvShowHide2?.visibility == View.VISIBLE) {
             tvShowHide1.visibility = View.INVISIBLE
             tvShowHide2.visibility = View.INVISIBLE
             animationTextView(tvAnimation!!, -tvAnimation.x + 250f)
             when {
-                isMovie!! -> showFragment(
-                    moviesNowPlaying!![0],
-                    moviesNowPlaying,
-                    moviesPopular,
-                    null,
-                    null,
-                    ft,
-                    appDatabase,
-                    moviesTvShowInterface
-                )
-                isMyList!! -> {
+                isMovie -> {
+                    showFragment(
+                        moviesNowPlaying!![0],
+                        moviesNowPlaying,
+                        moviesPopular,
+                        null,
+                        null,
+                        context
+                    )
+                }
+                isMyList -> {
+                    params?.setMargins(0, 300, 0, 0)
+                    binding?.fg1?.layoutParams = params
+                    val ft = (context as HomeActivity).supportFragmentManager.beginTransaction()
                     ft.replace(
-                        R.id.fg1,
+                        binding?.fg1?.id!!,
                         MyListFragment(moviesTvShowInterface, appDatabase),
                     )
                     ft.commit()
                 }
-                else -> showFragment(
-                    tvAiringToday!![0], null, null, tvAiringToday, tvPopular,
-                    ft,
-                    appDatabase,
-                    moviesTvShowInterface
-                )
+                else -> {
+                    showFragment(
+                        tvAiringToday!![0], null, null, tvAiringToday, tvPopular, context
+                    )
+                }
             }
         } else {
             animationTextView(tvAnimation!!, -tvAnimation.x + 250f)
@@ -139,9 +164,7 @@ class HomeActivityViewModel @Inject constructor(private val homeActivityReposito
                 moviesPopular,
                 tvAiringToday,
                 tvPopular,
-                ft,
-                appDatabase,
-                moviesTvShowInterface
+                context
             )
         }
     }

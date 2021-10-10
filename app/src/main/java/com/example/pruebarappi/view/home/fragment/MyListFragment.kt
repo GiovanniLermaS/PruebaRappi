@@ -14,7 +14,7 @@ import com.example.pruebarappi.view.home.fragment.interfaces.MoviesTvShowInterfa
 import kotlinx.coroutines.launch
 
 class MyListFragment(
-    private val moviesTvShowInterface: MoviesTvShowInterface?, private val appDatabase: AppDatabase
+    private val moviesTvShowInterface: MoviesTvShowInterface?, private val appDatabase: AppDatabase?
 ) : Fragment() {
 
     private var listResultService: List<ResultService>? = null
@@ -31,7 +31,7 @@ class MyListFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launch {
-            listResultService = appDatabase.resultServiceDao().getResultService()
+            listResultService = appDatabase?.resultServiceDao()?.getResultService()
             if (listResultService != null && listResultService!!.isNotEmpty()) {
                 binding?.tvMyList?.adapter = MoviesTvShowAdapter(
                     listResultService as ArrayList<ResultService>,

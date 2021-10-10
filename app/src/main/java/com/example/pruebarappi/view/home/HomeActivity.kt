@@ -87,8 +87,6 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
                     moviesPopular,
                     tvAiringToday,
                     listTvPopular?.results,
-                    supportFragmentManager.beginTransaction(),
-                    appDatabase,
                     this
                 )
             },
@@ -103,7 +101,20 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
         binding?.clBottomSheet?.tvDescriptionBottom?.text = resultService?.overview
     }
 
-    fun onClick(v: View?) {
+    private fun setBottomSheetHidden() {
+        sheetBehavior = BottomSheetBehavior.from(binding?.clBottomSheet?.clDetailBottom!!)
+        sheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
+    private fun setOnClick() {
+        binding?.clToolbar?.tvShows?.setOnClickListener { onClick(binding?.clToolbar?.tvShows) }
+        binding?.clToolbar?.tvMovies?.setOnClickListener { onClick(binding?.clToolbar?.tvMovies) }
+        binding?.clToolbar?.tvMyList?.setOnClickListener { onClick(binding?.clToolbar?.tvMyList) }
+        binding?.clBottomSheet?.ivCloseBottom?.setOnClickListener { onClick(binding?.clBottomSheet?.ivCloseBottom) }
+        binding?.clBottomSheet?.clDetailBottom?.setOnClickListener { onClick(binding?.clBottomSheet?.clDetailBottom) }
+    }
+
+    private fun onClick(v: View?) {
         when (v) {
             binding?.clToolbar?.tvShows -> homeActivityViewModel.showByType(
                 binding?.clToolbar?.tvShows,
@@ -111,8 +122,6 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
                 binding?.clToolbar?.tvMyList,
                 isMovie = false,
                 isMyList = false,
-                supportFragmentManager.beginTransaction(),
-                appDatabase,
                 this
             )
             binding?.clToolbar?.tvMovies -> homeActivityViewModel.showByType(
@@ -121,8 +130,6 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
                 binding?.clToolbar?.tvMyList,
                 isMovie = true,
                 isMyList = false,
-                supportFragmentManager.beginTransaction(),
-                appDatabase,
                 this
             )
             binding?.clToolbar?.tvMyList -> homeActivityViewModel.showByType(
@@ -131,8 +138,6 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
                 binding?.clToolbar?.tvShows,
                 isMovie = false,
                 isMyList = true,
-                supportFragmentManager.beginTransaction(),
-                appDatabase,
                 this
             )
             binding?.clBottomSheet?.ivCloseBottom -> sheetBehavior?.state =
@@ -159,14 +164,14 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
+        homeActivityViewModel.setInitialParams(
+            appDatabase,
+            binding,
+            this
+        )
         consumeMoviesNowPlaying()
-        sheetBehavior = BottomSheetBehavior.from(binding?.clBottomSheet?.clDetailBottom!!)
-        sheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
-        binding?.clToolbar?.tvShows?.setOnClickListener { onClick(binding?.clToolbar?.tvShows) }
-        binding?.clToolbar?.tvMovies?.setOnClickListener { onClick(binding?.clToolbar?.tvMovies) }
-        binding?.clToolbar?.tvMyList?.setOnClickListener { onClick(binding?.clToolbar?.tvMyList) }
-        binding?.clBottomSheet?.ivCloseBottom?.setOnClickListener { onClick(binding?.clBottomSheet?.ivCloseBottom) }
-        binding?.clBottomSheet?.clDetailBottom?.setOnClickListener { onClick(binding?.clBottomSheet?.clDetailBottom) }
+        setBottomSheetHidden()
+        setOnClick()
     }
 
     override fun clickMovieTvShow(resultService: ResultService?) {
@@ -182,8 +187,6 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
                 binding?.clToolbar?.tvMyList,
                 isMovie = false,
                 isMyList = false,
-                supportFragmentManager.beginTransaction(),
-                appDatabase,
                 this
             )
             binding?.clToolbar?.tvMovies?.visibility == View.VISIBLE -> homeActivityViewModel.showByType(
@@ -192,8 +195,6 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
                 binding?.clToolbar?.tvMyList,
                 isMovie = false,
                 isMyList = false,
-                supportFragmentManager.beginTransaction(),
-                appDatabase,
                 this
             )
             binding?.clToolbar?.tvMyList?.visibility == View.VISIBLE -> homeActivityViewModel.showByType(
@@ -202,8 +203,6 @@ class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
                 binding?.clToolbar?.tvMovies,
                 isMovie = false,
                 isMyList = false,
-                supportFragmentManager.beginTransaction(),
-                appDatabase,
                 this
             )
             else -> super.onBackPressed()

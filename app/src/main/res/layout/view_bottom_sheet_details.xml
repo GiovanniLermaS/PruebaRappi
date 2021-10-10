@@ -8,7 +8,6 @@
         android:id="@+id/clDetailBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onClick"
         android:background="@drawable/bg_border_top_black_rectangle"
         fresco:behavior_hideable="true"
         fresco:behavior_peekHeight="200dp"
@@ -43,7 +42,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:onClick="onClick"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             fresco:layout_constraintEnd_toEndOf="parent"
             fresco:layout_constraintTop_toTopOf="@+id/tvTitleBottom" />

@@ -18,6 +18,7 @@ import com.example.pruebarappi.utils.BASE_URL_IMAGE
 import com.example.pruebarappi.utils.setImageAddOrRemoveMyList
 import com.example.pruebarappi.view.home.fragment.adapter.MoviesTvShowAdapter
 import com.example.pruebarappi.view.home.fragment.interfaces.MoviesTvShowInterface
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class MoviesTvShowFragment(
@@ -43,7 +44,7 @@ class MoviesTvShowFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         addOrRemoveMyList(
-            binding?.clPrincipalImage?.ivAdd,
+            binding?.clPrincipalImageFragment?.ivAdd,
             movieTvShow,
             false,
             R.drawable.ic_add,
@@ -51,16 +52,16 @@ class MoviesTvShowFragment(
         )
 
         //Principal image
-        binding?.clPrincipalImage?.clInfoPoster?.setOnClickListener {
+        binding?.clPrincipalImageFragment?.clInfoPoster?.setOnClickListener {
             moviesTvShowInterface?.clickMovieTvShow(
                 movieTvShow
             )
         }
-        binding?.clPrincipalImage?.ivPrincipalImage?.setImageURI(Uri.parse(BASE_URL_IMAGE + movieTvShow?.backdrop_path))
-        binding?.clPrincipalImage?.tvNameMovie?.text = movieTvShow?.title
-        binding?.clPrincipalImage?.clAddMyList?.setOnClickListener {
+        binding?.clPrincipalImageFragment?.ivPrincipalImage?.setImageURI(Uri.parse(BASE_URL_IMAGE + movieTvShow?.backdrop_path))
+        binding?.clPrincipalImageFragment?.tvNameMovie?.text = movieTvShow?.title
+        binding?.clPrincipalImageFragment?.clAddMyList?.setOnClickListener {
             addOrRemoveMyList(
-                binding?.clPrincipalImage?.ivAdd,
+                binding?.clPrincipalImageFragment?.ivAdd,
                 movieTvShow,
                 true,
                 R.drawable.ic_check,
@@ -99,6 +100,13 @@ class MoviesTvShowFragment(
             getString(R.string.tvPopular),
             listTvPopular
         )
+        binding?.clPrincipalImageFragment?.btPlay?.setOnClickListener {
+            Snackbar.make(
+                binding?.clFragmentMovies!!,
+                "Play any movie",
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -134,5 +142,9 @@ class MoviesTvShowFragment(
                 if (isResultService) resultServiceDao?.setResultService(resultService!!)
                 else resultServiceDao?.deleteResultServiceById(resultService?.id!!)
         }
+    }
+
+    private fun onClick(view: View?) {
+
     }
 }

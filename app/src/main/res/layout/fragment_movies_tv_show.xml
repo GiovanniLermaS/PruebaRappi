@@ -2,11 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clFragmentMovies"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <include
-        android:id="@+id/clPrincipalImage"
+        android:id="@+id/clPrincipalImageFragment"
         layout="@layout/principal_image"
         android:layout_width="0dp"
         android:layout_height="350dp"

@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailActivity : AppCompatActivity(), View.OnClickListener {
+class DetailActivity : AppCompatActivity() {
 
     private val resultService by lazy { intent.getSerializableExtra(RESULT_SERVICE) as ResultService }
 
@@ -76,22 +76,23 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
-        binding = ActivityDetailBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
-        showDetailMovie()
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.ivAdd -> addOrRemoveMyList(
+    fun onClick(v: View?) {
+        when (v) {
+            binding?.ivAdd -> addOrRemoveMyList(
                 binding?.ivAdd,
                 true,
                 R.drawable.ic_check,
                 R.drawable.ic_add
             )
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_detail)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+        binding?.ivAdd?.setOnClickListener { onClick(binding?.ivAdd) }
+        showDetailMovie()
     }
 }

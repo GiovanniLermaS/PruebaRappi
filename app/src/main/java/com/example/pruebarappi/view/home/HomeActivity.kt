@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.pruebarappi.R
 import com.example.pruebarappi.databinding.ActivityHomeBinding
 import com.example.pruebarappi.db.AppDatabase
 import com.example.pruebarappi.db.model.ResultService
@@ -21,7 +20,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInterface {
+class HomeActivity : AppCompatActivity(), MoviesTvShowInterface {
 
     private var sheetBehavior: BottomSheetBehavior<View>? = null
 
@@ -104,28 +103,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
         binding?.clBottomSheet?.tvDescriptionBottom?.text = resultService?.overview
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE)
-        consumeMoviesNowPlaying()
-        sheetBehavior = BottomSheetBehavior.from(binding?.clBottomSheet?.clDetailBottom!!)
-        sheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.btPlay -> Snackbar.make(
-                binding?.coordinatorLayout!!,
-                "Play any movie",
-                Snackbar.LENGTH_SHORT
-            )
-                .show()
-            R.id.tvShows -> homeActivityViewModel.showByType(
+    fun onClick(v: View?) {
+        when (v) {
+            binding?.clToolbar?.tvShows -> homeActivityViewModel.showByType(
                 binding?.clToolbar?.tvShows,
                 binding?.clToolbar?.tvMovies,
                 binding?.clToolbar?.tvMyList,
@@ -135,7 +115,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
                 appDatabase,
                 this
             )
-            R.id.tvMovies -> homeActivityViewModel.showByType(
+            binding?.clToolbar?.tvMovies -> homeActivityViewModel.showByType(
                 binding?.clToolbar?.tvMovies,
                 binding?.clToolbar?.tvShows,
                 binding?.clToolbar?.tvMyList,
@@ -145,7 +125,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
                 appDatabase,
                 this
             )
-            R.id.tvMyList -> homeActivityViewModel.showByType(
+            binding?.clToolbar?.tvMyList -> homeActivityViewModel.showByType(
                 binding?.clToolbar?.tvMyList,
                 binding?.clToolbar?.tvMovies,
                 binding?.clToolbar?.tvShows,
@@ -155,8 +135,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
                 appDatabase,
                 this
             )
-            R.id.ivCloseBottom -> sheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
-            R.id.clDetailBottom -> {
+            binding?.clBottomSheet?.ivCloseBottom -> sheetBehavior?.state =
+                BottomSheetBehavior.STATE_HIDDEN
+            binding?.clBottomSheet?.clDetailBottom -> {
                 if (sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED)
                     sheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
                 Timer().schedule(object : TimerTask() {
@@ -168,6 +149,24 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, MoviesTvShowInte
                 }, 100)
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE)
+        consumeMoviesNowPlaying()
+        sheetBehavior = BottomSheetBehavior.from(binding?.clBottomSheet?.clDetailBottom!!)
+        sheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+        binding?.clToolbar?.tvShows?.setOnClickListener { onClick(binding?.clToolbar?.tvShows) }
+        binding?.clToolbar?.tvMovies?.setOnClickListener { onClick(binding?.clToolbar?.tvMovies) }
+        binding?.clToolbar?.tvMyList?.setOnClickListener { onClick(binding?.clToolbar?.tvMyList) }
+        binding?.clBottomSheet?.ivCloseBottom?.setOnClickListener { onClick(binding?.clBottomSheet?.ivCloseBottom) }
+        binding?.clBottomSheet?.clDetailBottom?.setOnClickListener { onClick(binding?.clBottomSheet?.clDetailBottom) }
     }
 
     override fun clickMovieTvShow(resultService: ResultService?) {

@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
-    private var resultService: ResultService? = null
+    private val resultService by lazy { intent.getSerializableExtra(RESULT_SERVICE) as ResultService }
 
     @Inject
     lateinit var appDatabase: AppDatabase
@@ -31,11 +31,10 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-        resultService = intent.getSerializableExtra(RESULT_SERVICE) as ResultService
-        if (resultService != null) {
+        if (resultService.poster_path != null) {
             val postprocessor: Postprocessor = BlurPostprocessor(this, 50)
             val imageRequest =
-                ImageRequestBuilder.newBuilderWithSource(Uri.parse(BASE_URL_IMAGE + resultService?.poster_path))
+                ImageRequestBuilder.newBuilderWithSource(Uri.parse(BASE_URL_IMAGE + resultService.poster_path))
                     .setPostprocessor(postprocessor)
                     .build()
             val controller = Fresco.newDraweeControllerBuilder()
@@ -44,12 +43,11 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                 .build() as PipelineDraweeController
             ivBackgroundDetail.controller = controller
 
-            ivImageDetail.setImageURI(Uri.parse(BASE_URL_IMAGE + resultService?.poster_path))
-            tvDescriptionDetail.text = resultService?.overview
+            ivImageDetail.setImageURI(Uri.parse(BASE_URL_IMAGE + resultService.poster_path))
+            tvDescriptionDetail.text = resultService.overview
 
             addOrRemoveMyList(
                 ivAdd,
-                resultService,
                 false,
                 R.drawable.ic_add,
                 R.drawable.ic_check,
@@ -61,7 +59,6 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
         when (v?.id) {
             R.id.ivAdd -> addOrRemoveMyList(
                 ivAdd,
-                resultService,
                 true,
                 R.drawable.ic_check,
                 R.drawable.ic_add
@@ -71,7 +68,6 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun addOrRemoveMyList(
         ivAdd: ImageView,
-        resultService: ResultService?,
         isSetRoom: Boolean,
         image1: Int,
         image2: Int
@@ -79,7 +75,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
         val resultServiceDao = appDatabase.resultServiceDao()
         lifecycleScope.launch {
             val isResultService = setImageAddOrRemoveMyList(
-                resultServiceDao.getResultServiceById(resultService?.id!!),
+                resultServiceDao.getResultServiceById(resultService.id!!),
                 ivAdd,
                 resources,
                 image1,
@@ -87,7 +83,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
             )
             if (isSetRoom)
                 if (isResultService) resultServiceDao.setResultService(resultService)
-                else resultServiceDao.deleteResultServiceById(resultService.id)
+                else resultServiceDao.deleteResultServiceById(resultService.id!!)
         }
     }
 }

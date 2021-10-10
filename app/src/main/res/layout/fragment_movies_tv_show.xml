@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <include
-        android:id="@+id/clPrincipalImageFragment"
+        android:id="@+id/clPrincipalImage"
         layout="@layout/principal_image"
         android:layout_width="0dp"
         android:layout_height="350dp"

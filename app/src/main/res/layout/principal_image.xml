@@ -73,7 +73,6 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/bg_white_rectangle"
         android:paddingStart="20dp"
-        android:onClick="onClick"
         android:paddingEnd="0dp"
         android:text="@string/play"
         android:textColor="@android:color/black"

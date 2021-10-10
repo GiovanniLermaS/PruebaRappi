@@ -44,7 +44,7 @@ class MoviesTvShowFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         addOrRemoveMyList(
-            binding?.clPrincipalImageFragment?.ivAdd,
+            binding?.clPrincipalImage?.ivAdd,
             movieTvShow,
             false,
             R.drawable.ic_add,
@@ -52,16 +52,16 @@ class MoviesTvShowFragment(
         )
 
         //Principal image
-        binding?.clPrincipalImageFragment?.clInfoPoster?.setOnClickListener {
+        binding?.clPrincipalImage?.clInfoPoster?.setOnClickListener {
             moviesTvShowInterface?.clickMovieTvShow(
                 movieTvShow
             )
         }
-        binding?.clPrincipalImageFragment?.ivPrincipalImage?.setImageURI(Uri.parse(BASE_URL_IMAGE + movieTvShow?.backdrop_path))
-        binding?.clPrincipalImageFragment?.tvNameMovie?.text = movieTvShow?.title
-        binding?.clPrincipalImageFragment?.clAddMyList?.setOnClickListener {
+        binding?.clPrincipalImage?.ivPrincipalImage?.setImageURI(Uri.parse(BASE_URL_IMAGE + movieTvShow?.backdrop_path))
+        binding?.clPrincipalImage?.tvNameMovie?.text = movieTvShow?.title
+        binding?.clPrincipalImage?.clAddMyList?.setOnClickListener {
             addOrRemoveMyList(
-                binding?.clPrincipalImageFragment?.ivAdd,
+                binding?.clPrincipalImage?.ivAdd,
                 movieTvShow,
                 true,
                 R.drawable.ic_check,
@@ -100,7 +100,7 @@ class MoviesTvShowFragment(
             getString(R.string.tvPopular),
             listTvPopular
         )
-        binding?.clPrincipalImageFragment?.btPlay?.setOnClickListener {
+        binding?.clPrincipalImage?.btPlay?.setOnClickListener {
             Snackbar.make(
                 binding?.clFragmentMovies!!,
                 "Play any movie",
